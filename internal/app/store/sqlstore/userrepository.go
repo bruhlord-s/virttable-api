@@ -1,30 +1,31 @@
-package store
+package sqlstore
 
-import "github.com/bruhlord-s/virttable-api/internal/app/model"
+import (
+	"database/sql"
+
+	"github.com/bruhlord-s/virttable-api/internal/app/model"
+	"github.com/bruhlord-s/virttable-api/internal/app/store"
+)
 
 type UserRepository struct {
 	store *Store
 }
 
-func (r *UserRepository) Create(u *model.User) (*model.User, error) {
+func (r *UserRepository) Create(u *model.User) error {
 	if err := u.Validate(); err != nil {
-		return nil, err
+		return err
 	}
 
 	if err := u.BeforeCreate(); err != nil {
-		return nil, err
+		return err
 	}
 
-	if err := r.store.db.QueryRow(
+	return r.store.db.QueryRow(
 		"INSERT INTO users (email, username, encrypted_password) VALUES ($1, $2, $3) RETURNING id",
 		u.Email,
 		u.Username,
 		u.EncryptedPassword,
-	).Scan(&u.ID); err != nil {
-		return nil, err
-	}
-
-	return u, nil
+	).Scan(&u.ID)
 }
 
 func (r *UserRepository) FindByUsername(username string) (*model.User, error) {
@@ -33,6 +34,10 @@ func (r *UserRepository) FindByUsername(username string) (*model.User, error) {
 		"SELECT id, email, username, encrypted_password FROM users WHERE username=$1",
 		username,
 	).Scan(&u.ID, &u.Email, &u.Username, &u.EncryptedPassword); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, store.ErrRecordNotFound
+		}
+
 		return nil, err
 	}
 
