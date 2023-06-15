@@ -15,6 +15,20 @@ services:
       - "5432:5432"
     networks:
       - dev-network
+  db_test:
+    container_name: vt_postgres_test
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: "vt_test"
+      POSTGRES_USER: "vt"
+      POSTGRES_PASSWORD: "secret"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - vt-test-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - dev-network
   adminer:
     container_name: vt_adminer
     image: adminer:latest
@@ -25,6 +39,7 @@ services:
 
 volumes:
   vt-data:
+  vt-test-data:
 
 networks:
   dev-network:
