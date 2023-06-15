@@ -16,10 +16,10 @@ make init
 docker-compose up -d
 ```
 
-- Run migrations for actual database and test database
+- Run migrations for actual database and test database (I use [Migrate CLI](https://github.com/golang-migrate/migrate))
 
 ```
-~/migrate -path migrations -database "postgres://<username>:<password>@<host>:<port>/<db_name>?sslmode=disable" up
+migrate -path migrations -database "postgres://<username>:<password>@<host>:<port>/<db_name>?sslmode=disable" up
 ```
 
 - Run tests to check if everything is ok
