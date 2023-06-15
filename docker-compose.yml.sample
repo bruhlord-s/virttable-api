@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  db:
+    container_name: vt_postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: "vt"
+      POSTGRES_USER: "vt"
+      POSTGRES_PASSWORD: "secret"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - vt-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - dev-network
+  adminer:
+    container_name: vt_adminer
+    image: adminer:latest
+    ports:
+      - "5050:8080"
+    networks:
+      - dev-network
+
+volumes:
+  vt-data:
+
+networks:
+  dev-network:
+    name: dev-network
