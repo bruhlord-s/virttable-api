@@ -1,6 +1,8 @@
 package model
 
 import (
+	"time"
+
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 	"github.com/golang-jwt/jwt"
@@ -48,9 +50,13 @@ func (u *User) ComparePassword(password string) bool {
 }
 
 func (u *User) CreateJWT(key []byte) (string, error) {
-	c := jwt.MapClaims{
-		"iss": "virttable-api",
-		"uid": &u.ID,
+	exp := time.Now().Add(24 * time.Hour)
+	c := &Claims{
+		u.ID,
+		jwt.StandardClaims{
+			Subject: u.Email,
+			ExpiresAt: exp.Unix(),
+		},
 	}
 	return jwt.NewWithClaims(jwt.SigningMethodHS256, c).SignedString(key);
 }

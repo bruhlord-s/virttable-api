@@ -3,6 +3,7 @@ package teststore
 import (
 	"github.com/bruhlord-s/virttable-api/internal/app/model"
 	"github.com/bruhlord-s/virttable-api/internal/app/store"
+	"github.com/google/uuid"
 )
 
 type Store struct {
@@ -20,8 +21,7 @@ func (s *Store) User() store.UserRepository {
 
 	s.UserRepository = &UserRepository{
 		store: s,
-		usersByUsername: make(map[string]*model.User),
-		usersByEmail: make(map[string]*model.User),
+		users: make(map[uuid.UUID]*model.User),
 	}
 
 	return s.UserRepository
