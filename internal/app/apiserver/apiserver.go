@@ -15,7 +15,7 @@ func Start(config *Config) error {
 
 	defer db.Close()
 	store := sqlstore.New(db)
-	s := newServer(store)
+	s := newServer(store, config.JWTKey)
 
 	return http.ListenAndServe(config.BindAddr, s)
 }
